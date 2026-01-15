@@ -49,6 +49,26 @@ public class S3StorageService {
         return key;
     }
 
+    public String updateImage(MultipartFile file, String key) throws IOException{
+        if(file.isEmpty())
+            throw new IllegalArgumentException("File is empty");
+        String contentType = file.getContentType();
+        if(contentType == null || !ALLOWED.contains(contentType))
+            throw new IllegalArgumentException("Unsupported content type: " + contentType);
+
+        String ext = guessExt(contentType);
+        PutObjectRequest req = PutObjectRequest.builder()
+                .bucket(props.s3().bucket())
+                .key(key)
+                .contentType(contentType)
+                .metadata(java.util.Map.of("original-filename", safeName(file.getOriginalFilename())))
+                .build();
+        s3.putObject(req, RequestBody.fromBytes(file.getBytes()));
+        return key;
+    }
+
+
+
     public void deleteImage(String key) {
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(props.s3().bucket())

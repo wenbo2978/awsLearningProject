@@ -1,11 +1,11 @@
 package com.aws_practice.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,5 +25,16 @@ public class User {
     private String password;
     private String phone;
     private String avatar;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="role_id", referencedColumnName = "id")
+    )
+    private Collection<Role> roles = new HashSet<>();
 
 }
