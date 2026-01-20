@@ -20,6 +20,9 @@ target/
 *.ipr
 
 application.properties
+application-local.properties
+application-docker.properties
+.env
 
 ### NetBeans ###
 /nbproject/private/
