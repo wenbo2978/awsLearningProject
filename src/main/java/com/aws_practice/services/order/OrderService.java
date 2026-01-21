@@ -1,6 +1,7 @@
 package com.aws_practice.services.order;
 
 import com.aws_practice.dto.OrderDto;
+import com.aws_practice.dto.OrderPlacedDomainEvent;
 import com.aws_practice.enums.OrderStatus;
 import com.aws_practice.exceptions.ResourceNotFoundException;
 import com.aws_practice.models.Cart;
@@ -12,6 +13,7 @@ import com.aws_practice.repositories.ProductRepository;
 import com.aws_practice.services.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class OrderService implements IOrderService{
     private final ProductRepository productRepository;
     private final CartService cartService;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher appEventPublisher;
 
     @Transactional
     @Override
@@ -38,6 +41,20 @@ public class OrderService implements IOrderService{
         order.setTotalAmount(calculateTotalAmount(orderItemList));
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart(cart.getId());
+
+        /*
+        * Publish ONLY after successful commit
+        * */
+
+        OrderPlacedDomainEvent event = new OrderPlacedDomainEvent(
+                savedOrder.getOrderId(),
+                userId,
+                savedOrder.getTotalAmount(),
+                savedOrder.getOrderDate()
+        );
+
+        appEventPublisher.publishEvent(event);
+
         return savedOrder;
     }
 

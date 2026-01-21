@@ -1,6 +1,6 @@
 package com.aws_practice.services;
 
-import com.aws_practice.security.config.AppAwsProperties;
+import com.aws_practice.aws.config.AppAwsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,4 +1,4 @@
-package com.aws_practice.security.config;
+package com.aws_practice.aws.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
