@@ -49,8 +49,7 @@ public class OrderService implements IOrderService{
         OrderPlacedDomainEvent event = new OrderPlacedDomainEvent(
                 savedOrder.getOrderId(),
                 userId,
-                savedOrder.getTotalAmount(),
-                savedOrder.getOrderDate()
+                savedOrder.getTotalAmount()
         );
 
         appEventPublisher.publishEvent(event);

@@ -6,6 +6,5 @@ import java.time.LocalDate;
 public record OrderPlacedDomainEvent(
         Long orderId,
         Long userId,
-        BigDecimal totalAmount,
-        LocalDate placedAt
+        BigDecimal totalAmount
 ) {}
