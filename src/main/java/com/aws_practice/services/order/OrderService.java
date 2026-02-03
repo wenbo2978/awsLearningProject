@@ -2,8 +2,10 @@ package com.aws_practice.services.order;
 
 import com.aws_practice.dto.OrderDto;
 import com.aws_practice.dto.OrderPlacedDomainEvent;
+import com.aws_practice.dto.OrderSummaryDto;
 import com.aws_practice.enums.OrderStatus;
 import com.aws_practice.exceptions.ResourceNotFoundException;
+import com.aws_practice.mapper.OrderQueryMapper;
 import com.aws_practice.models.Cart;
 import com.aws_practice.models.Order;
 import com.aws_practice.models.OrderItem;
@@ -30,6 +32,7 @@ public class OrderService implements IOrderService{
     private final CartService cartService;
     private final ModelMapper modelMapper;
     private final ApplicationEventPublisher appEventPublisher;
+    private final OrderQueryMapper orderQueryMapper;
 
     @Transactional
     @Override
@@ -103,5 +106,10 @@ public class OrderService implements IOrderService{
     @Override
     public OrderDto convertToDto(Order order) {
         return modelMapper.map(order, OrderDto.class);
+    }
+
+    @Override
+    public List<OrderSummaryDto> getOrderSummaryByUserId(Long userId) {
+        return orderQueryMapper.findOrderSummaryByUserId(userId);
     }
 }

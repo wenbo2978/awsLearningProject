@@ -1,6 +1,7 @@
 package com.aws_practice.services.order;
 
 import com.aws_practice.dto.OrderDto;
+import com.aws_practice.dto.OrderSummaryDto;
 import com.aws_practice.models.Order;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface IOrderService {
     OrderDto getOrder(Long orderId);
     List<OrderDto> getUserOrders(Long userId);
     OrderDto convertToDto(Order order);
+    List<OrderSummaryDto> getOrderSummaryByUserId(Long userId);
 }

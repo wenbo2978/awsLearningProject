@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aws_practice.mapper.OrderQueryMapper">
+
+    <select id="findOrderSummaryByUserId"
+            parameterType="long"
+            resultType="com.aws_practice.dto.OrderSummaryDto">
+        SELECT
+        o.order_id      AS orderId,
+        u.email         AS userEmail,
+        o.total_amount  AS totalAmount,
+        COUNT(oi.id)    AS itemCount,
+        o.order_date    AS orderDate
+        FROM orders o
+        JOIN user u ON u.id = o.user_id
+        JOIN order_item oi ON oi.order_id = o.order_id
+        WHERE u.id = #{userId}
+        GROUP BY o.order_id, u.email, o.total_amount, o.order_date
+        ORDER BY o.order_date DESC
+    </select>
+
+</mapper>

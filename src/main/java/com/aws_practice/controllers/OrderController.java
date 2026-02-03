@@ -1,6 +1,7 @@
 package com.aws_practice.controllers;
 
 import com.aws_practice.dto.OrderDto;
+import com.aws_practice.dto.OrderSummaryDto;
 import com.aws_practice.models.Order;
 import com.aws_practice.response.ApiResponse;
 import com.aws_practice.services.order.IOrderService;
@@ -35,6 +36,12 @@ public class OrderController {
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
         List<OrderDto> order = orderService.getUserOrders(userId);
         return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+    }
+
+    @GetMapping("/summary/user/{userId}")
+    public ResponseEntity<ApiResponse> getOrderSummary(@PathVariable Long userId) {
+        List<OrderSummaryDto> orders = orderService.getOrderSummaryByUserId(userId);
+        return ResponseEntity.ok(new ApiResponse("Query Orders Success!", orders));
     }
 
 }
