@@ -6,6 +6,7 @@ import com.aws_practice.request.AddProductRequest;
 import com.aws_practice.request.ProductUpdateRequest;
 import com.aws_practice.response.ApiResponse;
 import com.aws_practice.services.product.IProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,7 @@ public class ProductController {
         return  ResponseEntity.ok(new ApiResponse("success", productDto));
     }
 
+    @Operation(summary = "Create a new product")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
