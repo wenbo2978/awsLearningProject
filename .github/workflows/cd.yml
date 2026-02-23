@@ -1,0 +1,58 @@
+name: CD (EC2 via Docker Compose)
+
+on:
+  workflow_run:
+    workflows: [ "Spring Boot CI" ]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Force lowercase for GHCR image name to match what EC2 pulls
+      - name: Build and push (latest + sha)
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker build -t "$IMAGE:latest" -t "$IMAGE:${GITHUB_SHA}" .
+          docker push "$IMAGE:latest"
+          docker push "$IMAGE:${GITHUB_SHA}"
+
+  deploy-ec2:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/ecommerce
+
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+
+            docker image prune -f

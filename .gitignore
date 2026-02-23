@@ -21,7 +21,6 @@ target/
 
 application.properties
 application-local.properties
-application-docker.properties
 .env
 
 ### NetBeans ###
